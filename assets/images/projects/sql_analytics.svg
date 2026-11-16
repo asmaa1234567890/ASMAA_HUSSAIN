@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-sql" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg-sql)"/>
+  <rect x="80" y="35" width="640" height="45" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.1)"/>
+  <circle cx="105" cy="57" r="6" fill="#38bdf8"/>
+  <text x="125" y="62" font-family="sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">ENTERPRISE SQL ANALYTICS • CTES &amp; WINDOW FUNCTIONS</text>
+  <rect x="595" y="46" width="110" height="24" rx="12" fill="rgba(56, 189, 248, 0.2)" stroke="#38bdf8" stroke-width="1"/>
+  <text x="650" y="62" font-family="sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">SQL / ANSI</text>
+
+  <rect x="80" y="95" width="640" height="290" rx="8" fill="#020617" stroke="rgba(56, 189, 248, 0.2)" stroke-width="1"/>
+  <text x="110" y="135" font-family="'Fira Code', monospace" font-size="13" fill="#94a3b8">
+    <tspan fill="#c084fc">WITH</tspan> monthly_kpis <tspan fill="#c084fc">AS</tspan> (
+  </text>
+  <text x="130" y="160" font-family="'Fira Code', monospace" font-size="13" fill="#94a3b8">
+    <tspan fill="#38bdf8">SELECT</tspan> DATE_TRUNC('month', order_date) <tspan fill="#c084fc">AS</tspan> txn_month,
+  </text>
+  <text x="175" y="185" font-family="'Fira Code', monospace" font-size="13" fill="#94a3b8">
+    <tspan fill="#f59e0b">SUM</tspan>(net_amount) <tspan fill="#c084fc">AS</tspan> total_revenue,
+  </text>
+  <text x="175" y="210" font-family="'Fira Code', monospace" font-size="13" fill="#94a3b8">
+    <tspan fill="#34d399">DENSE_RANK</tspan>() <tspan fill="#c084fc">OVER</tspan> (<tspan fill="#c084fc">ORDER BY</tspan> <tspan fill="#f59e0b">SUM</tspan>(net_amount) <tspan fill="#c084fc">DESC</tspan>) <tspan fill="#c084fc">AS</tspan> revenue_rank,
+  </text>
+  <text x="175" y="235" font-family="'Fira Code', monospace" font-size="13" fill="#94a3b8">
+    <tspan fill="#34d399">LAG</tspan>(<tspan fill="#f59e0b">SUM</tspan>(net_amount), 1) <tspan fill="#c084fc">OVER</tspan> (<tspan fill="#c084fc">ORDER BY</tspan> DATE_TRUNC('month', order_date)) <tspan fill="#c084fc">AS</tspan> prev_month_rev
+  </text>
+  <text x="130" y="260" font-family="'Fira Code', monospace" font-size="13" fill="#94a3b8">
+    <tspan fill="#38bdf8">FROM</tspan> enterprise_transactions
+  </text>
+  <text x="130" y="285" font-family="'Fira Code', monospace" font-size="13" fill="#94a3b8">
+    <tspan fill="#38bdf8">GROUP BY</tspan> 1
+  </text>
+  <text x="110" y="310" font-family="'Fira Code', monospace" font-size="13" fill="#94a3b8">
+    )
+  </text>
+  <text x="110" y="335" font-family="'Fira Code', monospace" font-size="13" fill="#94a3b8">
+    <tspan fill="#38bdf8">SELECT</tspan> txn_month, total_revenue, ROUND(100.0 * (total_revenue - prev_month_rev)/prev_month_rev, 2) <tspan fill="#c084fc">AS</tspan> mom_growth_pct <tspan fill="#38bdf8">FROM</tspan> monthly_kpis;
+  </text>
+  <text x="110" y="365" font-family="sans-serif" font-size="11" fill="#38bdf8">✓ Query executed in 14ms across 1.2M rows • Output: MoM Revenue Growth &amp; Leaderboard</text>
+</svg>
